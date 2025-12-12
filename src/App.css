@@ -1,0 +1,249 @@
+/* Genel Sayfa Ayarları */
+body {
+  background-color: #f4f6f8; /* Arka plan hafif gri */
+  font-family: "Segoe UI", sans-serif;
+  margin: 0;
+  padding: 20px;
+}
+
+.app-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+header h1 {
+  text-align: center;
+  color: #1a1a1a;
+  margin-bottom: 30px;
+}
+
+/* Dashboard Izgara Yapısı (Grid) */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* İki eşit kolon */
+  gap: 20px; /* Kartlar arası boşluk */
+}
+
+/* Mobil uyumluluk: Telefondan girilirse tek kolon olsun */
+@media (max-width: 768px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* KART TASARIMI (Resimdeki beyaz kutular) */
+.card {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); /* Hafif gölge */
+  border: 1px solid #e1e4e8;
+}
+
+.card h3 {
+  margin-top: 0;
+  color: #333;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+  margin-bottom: 15px;
+}
+/* TEST KARTLARI TASARIMI (Kırılganlık, Düşme Riski vb.) */
+
+.test-container {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.soru-satiri {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #f0f0f0;
+  padding-bottom: 10px;
+}
+
+.soru-satiri p {
+  margin: 0;
+  font-size: 14px;
+  color: #444;
+  flex: 1; /* Yazı alanı genişlesin */
+  padding-right: 15px;
+}
+
+.btn-group {
+  display: flex;
+  gap: 8px;
+}
+
+.secim-btn {
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: all 0.2s;
+}
+
+.secim-btn:hover {
+  background-color: #ffffff;
+  color: #1a1a1a;
+  
+}
+
+/* Seçili olduğunda renkler değişsin */
+.evet-secili {
+  background-color: #ffffff !important;
+  color: #41b831;
+  border-color: #41b831;
+  font-weight: bold;
+}
+
+.hayir-secili {
+  background-color: #e68647 !important;
+  color: #ffffff;
+  border-color: #e68647;
+  font-weight: bold;
+}
+
+.hesapla-btn {
+  background-color: #e73b10;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  margin-top: 10px;
+  transition: ease 0.2s;
+}
+
+.hesapla-btn:hover {
+  opacity: 0.9;
+}
+
+.sonuc-kutusu {
+  background-color: #fafafa;
+  padding: 15px;
+  border-radius: 8px;
+  margin-top: 10px;
+  animation: fadeIn 0.5s ease;
+}
+
+.sonuc-kutusu h4 {
+  margin: 0 0 5px 0;
+  font-size: 16px;
+}
+
+.sonuc-kutusu p {
+  margin: 0;
+  font-size: 13px;
+  color: #666;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+/* DEMANS (AD8) TESTİ TASARIMI */
+
+.demans-card {
+  min-height: 250px; /* Kartın boyu sabit kalsın, zıplama yapmasın */
+  display: flex;
+  flex-direction: column;
+}
+
+.soru-alani {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  justify-content: center;
+}
+
+/* İlerleme Çubuğu */
+.progress-bar-bg {
+  width: 100%;
+  height: 6px;
+  background-color: #eee;
+  border-radius: 3px;
+  margin-bottom: 20px;
+  overflow: hidden;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background-color: #9b59b6; /* Mor renk demans farkındalık rengidir */
+  transition: width 0.3s ease;
+}
+
+.soru-metni {
+  font-size: 16px;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 25px;
+  min-height: 50px; /* Soru kısa olsa da yer kaplasın */
+}
+
+.demans-btn-group {
+  display: flex;
+  gap: 10px;
+}
+
+.d-btn {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: transform 0.1s;
+}
+
+.d-btn.evet {
+  background-color: #fce4ec;
+  color: #c2185b;
+  border: 1px solid #f8bbd0;
+}
+
+.d-btn.hayir {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+  border: 1px solid #c8e6c9;
+}
+
+.d-btn:active {
+  transform: scale(0.98);
+}
+
+/* Sonuç Ekranı */
+.sonuc-alani {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  animation: fadeIn 0.5s;
+}
+
+.skor-daire {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  border: 5px solid #ccc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  font-weight: bold;
+}
