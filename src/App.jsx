@@ -198,7 +198,7 @@ function App() {
             fontSize: "2.5rem",
           }}
         >
-          Yaşlı Dostu Bakım Asistanı (Online)
+          Yaşlı Dostu Bakım Asistanı 
         </h1>
         <div
           className="mobil-ters" // <-- İŞTE BURAYI EKLE
