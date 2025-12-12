@@ -201,6 +201,7 @@ function App() {
           Yaşlı Dostu Bakım Asistanı (Online)
         </h1>
         <div
+          className="mobil-ters" // <-- İŞTE BURAYI EKLE
           style={{
             display: "grid",
             gridTemplateColumns: "repeat(auto-fit, minmax(500px, 1fr))",
@@ -235,7 +236,7 @@ function App() {
             <DusmeRiski />
             <div style={{ marginTop: "25px" }}></div> {/* Araya boşluk olsun */}
             <KirilganlikTesti />
-             <div style={{ marginTop: "25px" }}></div> 
+            <div style={{ marginTop: "25px" }}></div>
           </div>
           <div
             style={{ display: "flex", flexDirection: "column", gap: "25px" }}

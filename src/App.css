@@ -247,3 +247,15 @@ header h1 {
   font-size: 24px;
   font-weight: bold;
 }
+/* MOBİL DÜZENLEME */
+@media (max-width: 900px) {
+  .mobil-ters {
+    display: flex !important; /* Satır içi stili ezmek için !important şart */
+    flex-direction: column-reverse !important; /* Alttakini üste alır */
+  }
+  
+  /* İçindeki kutular tam genişlik olsun */
+  .mobil-ters > div {
+    width: 100%;
+  }
+}
