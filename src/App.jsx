@@ -198,10 +198,9 @@ function App() {
             fontSize: "2.5rem",
           }}
         >
-          Yaşlı Dostu Bakım Asistanı 
+          Yaşlı Dostu Bakım Asistanı (Online)
         </h1>
         <div
-          className="mobil-ters" // <-- İŞTE BURAYI EKLE
           style={{
             display: "grid",
             gridTemplateColumns: "repeat(auto-fit, minmax(500px, 1fr))",
@@ -209,6 +208,27 @@ function App() {
             alignItems: "start",
           }}
         >
+          {/* 1. KUTU: ARTIK BURASI PROFİL KISMI (Kodda öne aldık) */}
+          {/* Telefonda ilk sırada olduğu için EN ÜSTTE görünecek ✅ */}
+          <div
+            style={{ display: "flex", flexDirection: "column", gap: "25px" }}
+          >
+            <ProfilOzet
+              adSoyad={aktifKullanici.isim}
+              suMiktari={suMiktari}
+              suHedefi={2000}
+              ilacDurumu={true}
+              onCikisYap={cikisYap}
+            />
+            <SuTakip
+              suMiktari={suMiktari}
+              onSuEkle={(m) => setSuMiktari((prev) => Math.max(0, prev + m))}
+            />
+            <DemansTesti />
+          </div>
+
+          {/* 2. KUTU: ARTIK BURASI İLAÇ KISMI (Kodda sona aldık) */}
+          {/* Telefonda profilin ALTINDA görünecek */}
           <div
             style={{ display: "flex", flexDirection: "column", gap: "25px" }}
           >
@@ -237,22 +257,6 @@ function App() {
             <div style={{ marginTop: "25px" }}></div> {/* Araya boşluk olsun */}
             <KirilganlikTesti />
             <div style={{ marginTop: "25px" }}></div>
-          </div>
-          <div
-            style={{ display: "flex", flexDirection: "column", gap: "25px" }}
-          >
-            <ProfilOzet
-              adSoyad={aktifKullanici.isim}
-              suMiktari={suMiktari}
-              suHedefi={2000}
-              ilacDurumu={true}
-              onCikisYap={cikisYap}
-            />
-            <SuTakip
-              suMiktari={suMiktari}
-              onSuEkle={(m) => setSuMiktari((prev) => Math.max(0, prev + m))}
-            />
-            <DemansTesti />
           </div>
         </div>
       </div>
