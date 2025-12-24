@@ -80,7 +80,7 @@ const KirilganlikTesti = () => {
           {/* Sonuç hesaplandıysa Öneri Kartı'nı göster */}
           {/* Senin koduna göre puan 3 ve üzeri "Yüksek Risk" sayılıyor */}
           <div style={{ marginTop: '10px' }}>
-            <OneriKarti isHighRisk={sonuc.puan >= 3} />
+            <OneriKarti dil={dil} isHighRisk={sonuc.puan >= 3} />
           </div>
         </>
       ) : (

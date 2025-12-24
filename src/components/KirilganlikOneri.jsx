@@ -1,13 +1,13 @@
 import React from 'react';
 
-const KirilganlikOneri = ({ isHighRisk }) => {
+const KirilganlikOneri = ({ dil, isHighRisk }) => {
 
   // Risk YOKSA (Yeşil - Sağlam/Robust)
   if (!isHighRisk) {
     return (
       <div style={safeStyle}>
-        <h3 style={{ margin: 0 }}>💪 Maşallah, Turp Gibisiniz!</h3>
-        <p>Enerjiniz ve fiziksel kapasiteniz gayet yerinde. Bu gücü korumak için aktif hayata ve dengeli beslenmeye aynen devam.</p>
+        <h3 style={{ margin: 0 }}>💪 {dil.kOneri.saglamBaslik}</h3>
+        <p>{dil.kOneri.saglamMetin}</p>
       </div>
     );
   }
@@ -18,9 +18,9 @@ const KirilganlikOneri = ({ isHighRisk }) => {
       <div style={headerStyle}>
         <span style={{ fontSize: '30px' }}>🔋</span>
         <div>
-          <h3 style={{ margin: 0, color: '#E65100' }}>Vücut Direnciniz Düşmüş Olabilir</h3>
+          <h3 style={{ margin: 0, color: '#E65100' }}>{dil.kOneri.riskBaslik}</h3>
           <p style={{ margin: '5px 0 0 0', color: '#555', fontSize: '14px' }}>
-            Kas gücünüzü ve enerjinizi geri kazanmak için yaşam tarzınızda şu değişiklikleri yapmalısınız:
+            {dil.kOneri.riskMetin}
           </p>
         </div>
       </div>
@@ -30,29 +30,29 @@ const KirilganlikOneri = ({ isHighRisk }) => {
         {/* 1. BESLENME (Protein) - Kilo kaybı için */}
         <div style={cardStyle}>
           <div style={iconBox}>🥩</div>
-          <strong>Protein Tüketin</strong>
-          <p style={descStyle}>Kas kaybını önlemek için her öğünde yumurta, yoğurt, et veya baklagil tüketin.</p>
+          <strong>{dil.kOneri.m1Baslik}</strong>
+          <p style={descStyle}>K{dil.kOneri.m1Metin}</p>
         </div>
 
         {/* 2. GÜÇ EGZERSİZİ - El sıkma gücü için */}
         <div style={cardStyle}>
           <div style={iconBox}>🏋️‍♀️</div>
-          <strong>Kas Güçlendirme</strong>
-          <p style={descStyle}>Sadece yürümek yetmez. Su şişesi kaldırma veya lastik çekme gibi kas egzersizleri yapın.</p>
+          <strong>{dil.kOneri.m2Baslik}</strong>
+          <p style={descStyle}>{dil.kOneri.m2Metin}</p>
         </div>
 
         {/* 3. ENERJİ/VİTAMİN - Yorgunluk için */}
         <div style={cardStyle}>
           <div style={iconBox}>🩸</div>
-          <strong>Vitamin Kontrolü</strong>
-          <p style={descStyle}>Sürekli yorgunluk D vitamini veya B12 eksikliğinden olabilir. Aile hekiminize danışın.</p>
+          <strong>{dil.kOneri.m3Baslik}</strong>
+          <p style={descStyle}>{dil.kOneri.m3Metin}</p>
         </div>
 
         {/* 4. AKTİVİTE - Yavaşlama için */}
         <div style={cardStyle}>
           <div style={iconBox}>🌳</div>
-          <strong>Hareket Edin</strong>
-          <p style={descStyle}>"Yorulurum" diye oturmayın. Hareket ettikçe enerjiniz açılır. Günde 20 dk tempolu yürüyün.</p>
+          <strong>{dil.kOneri.m4Baslik}</strong>
+          <p style={descStyle}>{dil.kOneri.m4Metin}</p>
         </div>
 
       </div>

@@ -1,16 +1,15 @@
 import React from 'react';
 
-const ProfilOzet = ({ adSoyad, suMiktari, suHedefi, ilacDurumu }) => {
+const ProfilOzet = ({ dil,adSoyad, suMiktari, suHedefi, ilacDurumu }) => {
   // SU DURUMU MESAJI
   const suBasarili = suMiktari >= suHedefi;
-  const suMesaji = suBasarili 
-    ? "💧 Harikasın! Bugün su hedefine ulaştın." 
-    : `⚠️ Su hedefine henüz ulaşılmadı. (${suMiktari}ml / ${suHedefi}ml)`;
+ const suMesaji = suBasarili
+    ? dil.suBasarili
+    : `${dil.suBasarisiz} (${suMiktari}ml / ${suHedefi}ml)`;
 
   // İLAÇ DURUMU MESAJI (Basit mantık: true ise başarılı, false ise başarısız)
-  const ilacMesaji = ilacDurumu 
-    ? "💊 Bütün ilaçlar zamanında içildi." 
-    : "⚠️ İlaçlar tam zamanında içilmedi, saatlere dikkat edelim!";
+  const ilacMesaji = ilacDurumu ? dil.ictim : dil.icmedim;
+   
 
   return (
     <div style={styles.card}>
@@ -21,7 +20,7 @@ const ProfilOzet = ({ adSoyad, suMiktari, suHedefi, ilacDurumu }) => {
         </div>
         <div>
           <h3 style={{ margin: 0, color: '#333' }}>{adSoyad}</h3>
-          <span style={{ fontSize: '12px', color: '#777' }}>Günlük Sağlık Özeti</span>
+          <span style={{ fontSize: '12px', color: '#777' }}>{dil.profil}</span>
         </div>
       </div>
 

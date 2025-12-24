@@ -1,13 +1,13 @@
 import React from 'react';
 
-const DusmeOneri = ({ isHighRisk }) => {
+const DusmeOneri = ({ dil, isHighRisk }) => {
 
   // Risk DÜŞÜKSE (Yeşil - Güvenli)
   if (!isHighRisk) {
     return (
       <div style={safeStyle}>
-        <h3 style={{ margin: 0 }}>✅ Denge ve Hareket Gayet İyi!</h3>
-        <p>Düşme riskiniz düşük görünüyor. Kas gücünüzü korumak için yürüyüş yapmayı ihmal etmeyin.</p>
+        <h3 style={{ margin: 0 }}>{dil.duOneri.saglamBaslik}</h3>
+        <p>{dil.duOneri.saglamMetin}</p>
       </div>
     );
   }
@@ -18,9 +18,9 @@ const DusmeOneri = ({ isHighRisk }) => {
       <div style={headerStyle}>
         <span style={{ fontSize: '30px' }}>⚠️</span>
         <div>
-          <h3 style={{ margin: 0, color: '#D32F2F' }}>Düşme Riski Tespit Edildi</h3>
+          <h3 style={{ margin: 0, color: '#D32F2F' }}>{dil.duOneri.riskBaslik}</h3>
           <p style={{ margin: '5px 0 0 0', color: '#555', fontSize: '14px' }}>
-            Düşmelerin çoğu evde olur ve önlenebilir. İşte hemen almanız gereken önlemler:
+            {dil.duOneri.riskMetin}
           </p>
         </div>
       </div>
@@ -30,35 +30,35 @@ const DusmeOneri = ({ isHighRisk }) => {
         {/* 1. Ev Güvenliği */}
         <div style={cardStyle}>
           <div style={iconBox}>🏠</div>
-          <strong>Ev Düzeni</strong>
-          <p style={descStyle}>Kaygan halıları kaldırın, banyo ve tuvalete tutunma barları taktırın.</p>
+          <strong>{dil.duOneri.rec1Baslik}</strong>
+          <p style={descStyle}>{dil.duOneri.rec1Metin}</p>
         </div>
 
         {/* 2. Göz Muayenesi */}
         <div style={cardStyle}>
           <div style={iconBox}>👓</div>
-          <strong>Göz Kontrolü</strong>
-          <p style={descStyle}>Görme kaybı dengeyi bozar. Göz numaranızın güncel olduğundan emin olun.</p>
+          <strong>{dil.duOneri.rec2Baslik}</strong>
+          <p style={descStyle}>{dil.duOneri.rec2Metin}</p>
         </div>
 
         {/* 3. Ayakkabı Seçimi */}
         <div style={cardStyle}>
           <div style={iconBox}>👟</div>
-          <strong>Doğru Ayakkabı</strong>
-          <p style={descStyle}>Evde terlik yerine, arkası kapalı ve kaymaz tabanlı ayakkabı giyin.</p>
+          <strong>{dil.duOneri.rec3Baslik}</strong>
+          <p style={descStyle}>{dil.duOneri.rec3Metin}</p>
         </div>
 
         {/* 4. Denge ve Kas */}
         <div style={cardStyle}>
           <div style={iconBox}>💪</div>
-          <strong>Denge Egzersizi</strong>
-          <p style={descStyle}>Hareketsizlik düşme riskini artırır. Basit denge egzersizlerine başlayın.</p>
+          <strong>{dil.duOneri.rec4Baslik}</strong>
+          <p style={descStyle}>{dil.duOneri.rec4Metin}</p>
         </div>
 
       </div>
 
       <div style={footerStyle}>
-        * Bu öneriler bilgilendirme amaçlıdır. Lütfen doktorunuza danışın.
+        {dil.duOneri.dipnot}
       </div>
     </div>
   );

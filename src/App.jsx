@@ -12,6 +12,7 @@ import {
   signInWithPopup,
 } from "firebase/auth";
 import { doc, getDoc, setDoc } from "firebase/firestore";
+import { ceviriler } from "./components/ceviri";
 
 // BİLEŞENLER
 import IlacTakip from "./components/IlacTakip";
@@ -23,6 +24,8 @@ import DusmeRiski from "./components/DusmeRiski";
 import GirisEkrani from "./components/GirisEkrani";
 
 function App() {
+  const [secilenDil, setSecilenDil] = useState("tr");
+  const metin = ceviriler[secilenDil] || ceviriler["tr"];
   const [aktifKullanici, setAktifKullanici] = useState(null);
   const [yukleniyor, setYukleniyor] = useState(true);
   const [ilaclar, setIlaclar] = useState([]);
@@ -190,6 +193,51 @@ function App() {
       }}
     >
       <div style={{ maxWidth: "1600px", margin: "0 auto" }}>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            gap: "10px",
+            marginBottom: "15px",
+          }}
+        >
+          <button
+            onClick={() => setSecilenDil("tr")}
+            style={{
+              cursor: "pointer",
+              padding: "5px 10px",
+              border: secilenDil === "tr" ? "2px solid blue" : "1px solid #ccc",
+              borderRadius: "5px",
+              opacity: secilenDil === "tr" ? 1 : 0.6,
+            }}
+          >
+            🇹🇷 TR
+          </button>
+          <button
+            onClick={() => setSecilenDil("en")}
+            style={{
+              cursor: "pointer",
+              padding: "5px 10px",
+              border: secilenDil === "en" ? "2px solid blue" : "1px solid #ccc",
+              borderRadius: "5px",
+              opacity: secilenDil === "en" ? 1 : 0.6,
+            }}
+          >
+            🇬🇧 EN
+          </button>
+          <button
+            onClick={() => setSecilenDil("de")}
+            style={{
+              cursor: "pointer",
+              padding: "5px 10px",
+              border: secilenDil === "de" ? "2px solid blue" : "1px solid #ccc",
+              borderRadius: "5px",
+              opacity: secilenDil === "de" ? 1 : 0.6,
+            }}
+          >
+            🇩🇪 DE
+          </button>
+        </div>
         <h1
           style={{
             textAlign: "center",
@@ -198,7 +246,7 @@ function App() {
             fontSize: "2.5rem",
           }}
         >
-          Yaşlı Dostu Bakım Asistanı 
+          Yaşlı Dostu Bakım Asistanı
         </h1>
         <div
           style={{
@@ -213,18 +261,18 @@ function App() {
           <div
             style={{ display: "flex", flexDirection: "column", gap: "25px" }}
           >
-            <ProfilOzet
+            <ProfilOzet dil={metin}
               adSoyad={aktifKullanici.isim}
               suMiktari={suMiktari}
               suHedefi={2000}
               ilacDurumu={true}
               onCikisYap={cikisYap}
             />
-            <SuTakip
+            <SuTakip dil={metin}
               suMiktari={suMiktari}
               onSuEkle={(m) => setSuMiktari((prev) => Math.max(0, prev + m))}
             />
-            <DemansTesti />
+            <DemansTesti dil={metin} />
           </div>
 
           {/* 2. KUTU: ARTIK BURASI İLAÇ KISMI (Kodda sona aldık) */}
@@ -233,7 +281,7 @@ function App() {
             style={{ display: "flex", flexDirection: "column", gap: "25px" }}
           >
             <div style={{ height: "600px" }}>
-              <IlacTakip
+              <IlacTakip dil={metin}
                 ilaclar={ilaclar}
                 onIlacEkle={(ad, ekstra, saat, tok) =>
                   setIlaclar([
@@ -253,9 +301,9 @@ function App() {
               />
             </div>
             {/* İlaç kutusunun altına bunları ekle: */}
-            <DusmeRiski />
+            <DusmeRiski dil={metin}/>
             <div style={{ marginTop: "25px" }}></div> {/* Araya boşluk olsun */}
-            <KirilganlikTesti />
+            <KirilganlikTesti dil={metin} />
             <div style={{ marginTop: "25px" }}></div>
           </div>
         </div>
