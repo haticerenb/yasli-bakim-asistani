@@ -1,126 +1,129 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
-const SuTakibi = () => {
-  const [totalWater, setTotalWater] = useState(0);
+const SuTakip = ({ dil, suMiktari, onSuEkle }) => {
+  // --- STATE (SAYAÇLAR) ---
   const [counts, setCounts] = useState({
     bardak: 0,
     kucukSise: 0,
-    buyukSise: 0
+    buyukSise: 0,
   });
 
-  const dailyGoal = 3000;
+  const dailyGoal = 2000; // Hedef (ml)
 
-  // --- Daire Çizim Hesaplamaları ---
-  const radius = 50; // Yarıçap
-  const circumference = 2 * Math.PI * radius; // Çevre uzunluğu
-  // Yüzdeyi hesapla (1'i geçmemesi için min kullandık, taşmasın diye)
-  const percentage = Math.min(totalWater / dailyGoal, 1);
-  // Ne kadarının boyanacağını hesapla
-  const offset = circumference - (percentage * circumference);
-  // ---------------------------------
+  // --- DAİRE ÇİZİM HESAPLAMALARI ---
+  const radius = 50;
+  const circumference = 2 * Math.PI * radius;
+  const percentage = Math.min(suMiktari / dailyGoal, 1);
+  const offset = circumference - percentage * circumference;
 
+  // --- FONKSİYONLAR ---
   const addWater = (type, amount) => {
-    setTotalWater((prev) => prev + amount);
+    // 1. Ana veritabanına ekle (App.jsx üzerinden)
+    onSuEkle(amount); 
+
+    // 2. Buton üzerindeki sayacı artır
     setCounts((prev) => ({
       ...prev,
-      [type]: prev[type] + 1
+      [type]: prev[type] + 1,
     }));
   };
 
   const resetAll = () => {
-    setTotalWater(0);
+    // Suyu sıfırlamak için mevcut miktarı çıkarıyoruz
+    onSuEkle(-suMiktari); 
     setCounts({ bardak: 0, kucukSise: 0, buyukSise: 0 });
   };
+
+  // ⚠️ DİKKAT: STİLLERİ BURAYA (containerStyle, buttonStyle vb.) EKLEMEYİ UNUTMA!
+  // (Az önceki koddan const containerStyle = ... kısımlarını buraya alabilirsin)
 
   return (
     <div style={containerStyle}>
       
-      {/* --- YUVARLAK BAŞLIK ALANI --- */}
-      <div style={{ textAlign: 'center', marginBottom: '20px' }}>
-        <h2 style={{ margin: '0 0 15px 0', fontSize: '20px', color: '#333' }}>Günlük Su Hedefi</h2>
-        
-        {/* Daire ve İçindeki Yazıyı Kapsayan Alan */}
-        <div style={{ position: 'relative', width: '120px', height: '120px', margin: '0 auto' }}>
-          
-          {/* SVG Daire Çizimi */}
-          <svg width="120" height="120" viewBox="0 0 120 120">
-            {/* Arkadaki Gri Halka */}
-            <circle
-              cx="60"
-              cy="60"
-              r={radius}
-              stroke="#eee"
-              strokeWidth="10"
-              fill="none"
-            />
-            {/* Öndeki Mavi Dolan Halka */}
-            <circle
-              cx="60"
-              cy="60"
-              r={radius}
-              stroke="#2196F3"
-              strokeWidth="10"
-              fill="none"
-              strokeDasharray={circumference}
-              strokeDashoffset={offset}
-              strokeLinecap="round"
-              // Dairenin tepesinden başlaması için döndürüyoruz
-              transform="rotate(-90 60 60)" 
-              style={{ transition: 'stroke-dashoffset 0.5s ease' }} // Animasyonlu dolsun
-            />
-          </svg>
-          
-          {/* Dairenin Ortasındaki Yazı */}
-          <div style={innerTextStyle}>
-            <span style={{ fontSize: '26px', fontWeight: 'bold', color: '#2196F3', lineHeight: '1' }}>
-              {totalWater}
-            </span>
-            <span style={{ fontSize: '12px', color: '#999', marginTop: '5px' }}>
-              / {dailyGoal} ml
-            </span>
-          </div>
+      {/* --- BAŞLIK --- */}
+      <h3 style={{ margin: "0 0 20px 0", color: "#333", fontSize: "18px" }}>
+        {dil?.suKutusu || "Günlük Su Hedefi"}
+      </h3>
+
+      {/* --- YUVARLAK GRAFİK --- */}
+      <div style={{ position: "relative", width: "120px", height: "120px", marginBottom: "20px" }}>
+        <svg width="120" height="120" viewBox="0 0 120 120">
+          {/* Arka Halka (Gri) */}
+          <circle
+            cx="60"
+            cy="60"
+            r={radius}
+            stroke="#eee"
+            strokeWidth="10"
+            fill="none"
+          />
+          {/* Ön Halka (Mavi - Hareketli) */}
+          <circle
+            cx="60"
+            cy="60"
+            r={radius}
+            stroke="#2196F3"
+            strokeWidth="10"
+            fill="none"
+            strokeDasharray={circumference}
+            strokeDashoffset={offset}
+            strokeLinecap="round"
+            transform="rotate(-90 60 60)"
+            style={{ transition: "stroke-dashoffset 0.5s ease" }}
+          />
+        </svg>
+
+        {/* Ortadaki Yazı */}
+        <div style={innerTextStyle}>
+          <span style={{ fontSize: "24px", fontWeight: "bold", color: "#2196F3", lineHeight: "1" }}>
+            {suMiktari}
+          </span>
+          <span style={{ fontSize: "10px", color: "#999", marginTop: "2px" }}>
+            / {dailyGoal} ml
+          </span>
         </div>
       </div>
 
-      <hr style={{ border: 'none', borderTop: '1px solid #eee', margin: '15px 0' }} />
-
-      {/* --- Butonlar Alanı (Yan Yana Grid) --- */}
-      <div style={gridStyle}>
+      {/* --- BUTONLAR --- */}
+      <div style={{ display: "flex", gap: "10px", width: "100%", justifyContent: "space-between" }}>
         
         {/* Bardak */}
-        <button onClick={() => addWater('bardak', 200)} style={buttonStyle}>
-          <span style={{ fontSize: '24px' }}>🥤</span>
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-            <span style={{ fontSize: '14px', fontWeight: 'bold' }}>Bardak</span>
-            <span style={{ fontSize: '12px' }}>200ml</span>
-          </div>
+        <div onClick={() => addWater("bardak", 200)} style={buttonStyle}>
+          <span style={{ fontSize: "24px" }}>🥤</span>
+          <span style={{ fontSize: "13px", fontWeight: "bold", color: "#1565c0", marginTop: "5px" }}>
+            {dil?.bardak || "Bardak"}
+          </span>
+          <span style={{ fontSize: "11px", color: "#555" }}>200ml</span>
           {counts.bardak > 0 && <span style={badgeStyle}>{counts.bardak}</span>}
-        </button>
+        </div>
 
         {/* Küçük Şişe */}
-        <button onClick={() => addWater('kucukSise', 500)} style={buttonStyle}>
-          <span style={{ fontSize: '24px' }}>💧</span>
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-            <span style={{ fontSize: '14px', fontWeight: 'bold' }}>Küçük</span>
-            <span style={{ fontSize: '12px' }}>500ml</span>
-          </div>
+        <div onClick={() => addWater("kucukSise", 500)} style={buttonStyle}>
+          <span style={{ fontSize: "24px" }}>💧</span>
+          <span style={{ fontSize: "13px", fontWeight: "bold", color: "#1565c0", marginTop: "5px" }}>
+            {dil?.kucuk || "Küçük"}
+          </span>
+          <span style={{ fontSize: "11px", color: "#555" }}>500ml</span>
           {counts.kucukSise > 0 && <span style={badgeStyle}>{counts.kucukSise}</span>}
-        </button>
+        </div>
 
         {/* Büyük Şişe */}
-        <button onClick={() => addWater('buyukSise', 1500)} style={buttonStyle}>
-          <span style={{ fontSize: '24px' }}>🌊</span>
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-            <span style={{ fontSize: '14px', fontWeight: 'bold' }}>Büyük</span>
-            <span style={{ fontSize: '12px' }}>1.5L</span>
-          </div>
+        <div onClick={() => addWater("buyukSise", 1500)} style={buttonStyle}>
+          <span style={{ fontSize: "24px" }}>🌊</span>
+          <span style={{ fontSize: "13px", fontWeight: "bold", color: "#1565c0", marginTop: "5px" }}>
+            {dil?.buyuk || "Büyük"}
+          </span>
+          <span style={{ fontSize: "11px", color: "#555" }}>1.5L</span>
           {counts.buyukSise > 0 && <span style={badgeStyle}>{counts.buyukSise}</span>}
-        </button>
-        
-        {/* Sıfırla Butonu */}
-        <button onClick={resetAll} style={resetButtonStyle}>
-           🗑️ Sıfırla
-        </button>
+        </div>
+
+        {/* Sıfırla */}
+        <div onClick={resetAll} style={resetButtonStyle}>
+          <span style={{ fontSize: "20px" }}>🗑️</span>
+          <span style={{ fontSize: "12px", marginTop: "5px" }}>
+            {dil?.sifirla || "Sıfırla"}
+          </span>
+        </div>
 
       </div>
     </div>

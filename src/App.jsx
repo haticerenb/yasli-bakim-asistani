@@ -30,6 +30,9 @@ function App() {
   const [yukleniyor, setYukleniyor] = useState(true);
   const [ilaclar, setIlaclar] = useState([]);
   const [suMiktari, setSuMiktari] = useState(0);
+  
+  
+ 
 
   const hatayiTurkceyeCevir = (hataKodu) => {
     switch (hataKodu) {
@@ -151,10 +154,11 @@ function App() {
     }
   };
 
-  const cikisYap = async () => {
-    await signOut(auth);
+ const cikisYap = async () => {
+    await signOut(auth);       // 1. Firebase bağlantısını kes
+    setAktifKullanici(null);   // 2. Ekrandaki kullanıcıyı temizle
+    setAktifSayfa("ozet");     // 3. Sayfayı başa döndür
   };
-
   // --- EKRAN ---
   if (yukleniyor)
     return (
@@ -266,7 +270,7 @@ function App() {
               suMiktari={suMiktari}
               suHedefi={2000}
               ilacDurumu={true}
-              onCikisYap={cikisYap}
+              onCikis={cikisYap}
             />
             <SuTakip dil={metin}
               suMiktari={suMiktari}

@@ -1,6 +1,6 @@
 import React from 'react';
 
-const ProfilOzet = ({ dil,adSoyad, suMiktari, suHedefi, ilacDurumu }) => {
+const ProfilOzet = ({ dil,adSoyad, suMiktari, suHedefi, ilacDurumu, onCikis }) => {
   // SU DURUMU MESAJI
   const suBasarili = suMiktari >= suHedefi;
  const suMesaji = suBasarili
@@ -22,6 +22,9 @@ const ProfilOzet = ({ dil,adSoyad, suMiktari, suHedefi, ilacDurumu }) => {
           <h3 style={{ margin: 0, color: '#333' }}>{adSoyad}</h3>
           <span style={{ fontSize: '12px', color: '#777' }}>{dil.profil}</span>
         </div>
+        <button onClick={onCikis} style={styles.logoutBtn}>
+          🚪 {dil.cikis || "Çıkış"}
+        </button>
       </div>
 
       <hr style={{ margin: '10px 0', border: 'none', borderTop: '1px solid #eee' }} />
@@ -73,6 +76,17 @@ const styles = {
     alignItems: 'center',
     justifyContent: 'center',
     fontSize: '24px'
+  },
+  logoutBtn: {
+    padding: "8px 15px",
+    backgroundColor: "#ffebee",
+    color: "#c62828",
+    border: "1px solid #ef9a9a",
+    borderRadius: "8px",
+    cursor: "pointer",
+    fontWeight: "bold",
+    fontSize: "14px",
+    transition: "0.2s",
   },
   messageBox: {
     display: 'flex',

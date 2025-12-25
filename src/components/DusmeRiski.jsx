@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-// 👇 1. IMPORT'U BURAYA EKLEDİM
 import DusmeOneri from "./DusmeOneri";
 
-const DusmeRiski = () => {
+const DusmeRiski = ({ dil }) => {
+  // --- STATE ---
   const [cevaplar, setCevaplar] = useState({
     dusmeGecmisi: null,
     dengeSorunu: null,
@@ -12,69 +12,115 @@ const DusmeRiski = () => {
 
   const [sonuc, setSonuc] = useState(null);
 
-  const sorular = [
-    { key: "dusmeGecmisi", soru: "Son 1 yıl içinde düştünüz mü?" },
-    {
-      key: "dengeSorunu",
-      soru: "Ayağa kalkarken veya yürürken denge sorunu yaşıyor musunuz?",
-    },
-    {
-      key: "cokluIlac",
-      soru: "Günde 4 veya daha fazla farklı ilaç kullanıyor musunuz?",
-    },
-    {
-      key: "gormeSorunu",
-      soru: "Görme ile ilgili ciddi bir probleminiz var mı?",
-    },
-  ];
+  // --- DİL ALGILAMA ---
+  // Dil paketi gelmezse hata vermesin diye varsayılan 'tr' yapıyoruz
+  const secilenDil =
+    dil?.cikis === "Log Out" ? "en" : dil?.cikis === "Ausloggen" ? "de" : "tr";
 
+  // --- ÇEVİRİ DEPOSU (SORULAR İÇİN) ---
+  const metinler = {
+    tr: {
+      baslik: "Düşme Riski Taraması",
+      sorular: [
+        { key: "dusmeGecmisi", soru: "Son 1 yıl içinde düştünüz mü?" },
+        { key: "dengeSorunu", soru: "Ayağa kalkarken veya yürürken denge sorunu yaşıyor musunuz?" },
+        { key: "cokluIlac", soru: "Günde 4 veya daha fazla farklı ilaç kullanıyor musunuz?" },
+        { key: "gormeSorunu", soru: "Görme ile ilgili ciddi bir probleminiz var mı?" }
+      ],
+      evet: "Evet",
+      hayir: "Hayır",
+      analizBtn: "Risk Hesapla",
+      uyari: "Lütfen tüm soruları cevaplayınız.",
+      sonucBaslik: "Analiz Sonucu",
+      yuksekRisk: "YÜKSEK Düşme Riski ⚠️",
+      dusukRisk: "Düşük Risk ✅",
+      yuksekDetay: "Ev düzenlemesi ve fiziksel destek gerekebilir.",
+      dusukDetay: "Önleyici egzersizlere devam ediniz."
+    },
+    en: {
+      baslik: "Fall Risk Screening",
+      sorular: [
+        { key: "dusmeGecmisi", soru: "Have you fallen in the last year?" },
+        { key: "dengeSorunu", soru: "Do you have balance problems while standing or walking?" },
+        { key: "cokluIlac", soru: "Do you take 4 or more different medications daily?" },
+        { key: "gormeSorunu", soru: "Do you have serious vision problems?" }
+      ],
+      evet: "Yes",
+      hayir: "No",
+      analizBtn: "Calculate Risk",
+      uyari: "Please answer all questions.",
+      sonucBaslik: "Analysis Result",
+      yuksekRisk: "HIGH Fall Risk ⚠️",
+      dusukRisk: "Low Risk ✅",
+      yuksekDetay: "Home modification and physical support may be needed.",
+      dusukDetay: "Continue preventive exercises."
+    },
+    de: {
+      baslik: "Sturzrisiko-Screening",
+      sorular: [
+        { key: "dusmeGecmisi", soru: "Sind Sie im letzten Jahr gestürzt?" },
+        { key: "dengeSorunu", soru: "Haben Sie Gleichgewichtsprobleme beim Aufstehen oder Gehen?" },
+        { key: "cokluIlac", soru: "Nehmen Sie täglich 4 oder mehr verschiedene Medikamente ein?" },
+        { key: "gormeSorunu", soru: "Haben Sie ernsthafte Sehprobleme?" }
+      ],
+      evet: "Ja",
+      hayir: "Nein",
+      analizBtn: "Risiko berechnen",
+      uyari: "Bitte beantworten Sie alle Fragen.",
+      sonucBaslik: "Analyseergebnis",
+      yuksekRisk: "HOHES Sturzrisiko ⚠️",
+      dusukRisk: "Geringes Risiko ✅",
+      yuksekDetay: "Wohnungsanpassung und physische Unterstützung können erforderlich sein.",
+      dusukDetay: "Setzen Sie präventive Übungen fort."
+    }
+  };
+
+  const ui = metinler[secilenDil];
+
+  // --- FONKSİYONLAR ---
   const cevapVer = (soruKey, deger) => {
     setCevaplar((prev) => ({ ...prev, [soruKey]: deger }));
-    setSonuc(null);
+    setSonuc(null); // Cevap değişirse eski sonucu gizle
   };
 
   const hesapla = () => {
+    // 1. Boş cevap var mı kontrol et
     if (Object.values(cevaplar).includes(null)) {
-      alert("Lütfen tüm soruları cevaplayınız.");
+      alert(ui.uyari);
       return;
     }
 
+    // 2. Puan Hesapla
     let puan = 0;
-    if (cevaplar.dusmeGecmisi) puan += 2;
+    if (cevaplar.dusmeGecmisi) puan += 2; // Geçmiş düşme önemli
     if (cevaplar.dengeSorunu) puan += 1;
     if (cevaplar.cokluIlac) puan += 1;
     if (cevaplar.gormeSorunu) puan += 1;
 
-    // 👇 2. BURAYI GÜNCELLEDİM: 'puan' bilgisini de state'e ekledim
-    if (puan >= 2) {
-      setSonuc({
-        durum: "YÜKSEK Düşme Riski",
-        renk: "#c62828",
-        detay: "Ev düzenlemesi ve fiziksel destek gerekebilir.",
-        bg: "#ffebee",
-        puan: puan, // <-- Puanı buraya ekledik ki aşağıda kullanalım
-      });
-    } else {
-      setSonuc({
-        durum: "Düşük Risk",
-        renk: "#2e7d32",
-        detay: "Önleyici egzersizlere devam ediniz.",
-        bg: "#e8f5e9",
-        puan: puan,
-      });
-    }
+    // 3. Sonucu Belirle
+    // 2 veya daha fazla puan riskli kabul edilsin
+    const riskli = puan >= 2;
+
+    setSonuc({
+      riskli: riskli,
+      puan: puan,
+      renk: riskli ? "#ef5350" : "#66bb6a",
+      bg: riskli ? "#ffebee" : "#e8f5e9"
+    });
   };
 
+  // --- RENDER ---
   return (
     <div style={styles.card}>
       {/* Başlık */}
       <div style={styles.header}>
-        <span style={{ fontSize: "22px" }}>🧗</span>
-        <h3 style={{ margin: 0, color: "#333" }}>Düşme Riski Taraması</h3>
+        <span style={{ fontSize: "22px" }}>🦴</span>
+        <h3 style={{ margin: 0, color: "#333" }}>{ui.baslik}</h3>
       </div>
 
+      {/* Sorular */}
       <div style={styles.container}>
-        {sorular.map((item) => (
+        {ui.sorular.map((item) => (
           <div key={item.key} style={styles.row}>
             <p style={{ margin: 0, flex: 1, fontSize: "14px", color: "#555" }}>
               {item.soru}
@@ -85,63 +131,60 @@ const DusmeRiski = () => {
                 onClick={() => cevapVer(item.key, true)}
                 style={{
                   ...styles.btn,
-                  background:
-                    cevaplar[item.key] === true ? "#ef5350" : "#f0f0f0",
+                  background: cevaplar[item.key] === true ? "#ef5350" : "#f0f0f0",
                   color: cevaplar[item.key] === true ? "white" : "#333",
                 }}
               >
-                Evet
+                {ui.evet}
               </button>
-
+              
               <button
                 onClick={() => cevapVer(item.key, false)}
                 style={{
                   ...styles.btn,
-                  background:
-                    cevaplar[item.key] === false ? "#66bb6a" : "#f0f0f0",
+                  background: cevaplar[item.key] === false ? "#66bb6a" : "#f0f0f0",
                   color: cevaplar[item.key] === false ? "white" : "#333",
                 }}
               >
-                Hayır
+                {ui.hayir}
               </button>
             </div>
           </div>
         ))}
-
-        {/* HESAPLA BUTONU */}
-        <button style={styles.calcBtn} onClick={hesapla}>
-          Risk Hesapla
-        </button>
-
-        {/* SONUÇ ALANI */}
-        {sonuc && (
-          <>
-            {/* Orijinal Basit Sonuç Kutusu */}
-            <div
-              style={{
-                ...styles.resultBox,
-                borderLeft: `5px solid ${sonuc.renk}`,
-                backgroundColor: sonuc.bg,
-              }}
-            >
-              <h4 style={{ margin: 0, color: sonuc.renk, fontSize: "16px" }}>
-                {sonuc.durum}
-              </h4>
-              <p
-                style={{ margin: "5px 0 0 0", fontSize: "13px", color: "#333" }}
-              >
-                {sonuc.detay}
-              </p>
-            </div>
-
-            {/* 👇 3. YENİ ÖNERİ KARTI BURAYA EKLENDİ 👇 */}
-            {/* Puan 2 ve üzeriyse Önerileri açar */}
-            <div style={{ marginTop: "15px" }}>
-              <DusmeOneri isHighRisk={sonuc.puan >= 2} />
-            </div>
-          </>
-        )}
       </div>
+
+      {/* Hesapla Butonu */}
+      <button style={styles.calcBtn} onClick={hesapla}>
+        {ui.analizBtn}
+      </button>
+
+      {/* SONUÇ ALANI */}
+      {sonuc && (
+        <div style={{ marginTop: "20px", animation: "fadeIn 0.5s" }}>
+          
+          {/* Basit Sonuç Kutusu */}
+          <div
+            style={{
+              ...styles.resultBox,
+              borderLeft: `5px solid ${sonuc.renk}`,
+              backgroundColor: sonuc.bg,
+            }}
+          >
+            <h4 style={{ margin: 0, color: sonuc.renk, fontSize: "16px" }}>
+              {sonuc.riskli ? ui.yuksekRisk : ui.dusukRisk}
+            </h4>
+            <p style={{ margin: "5px 0 0", fontSize: "13px", color: "#333" }}>
+              {sonuc.riskli ? ui.yuksekDetay : ui.dusukDetay}
+            </p>
+          </div>
+
+          {/* ÖNERİ KARTI (Dili buraya gönderiyoruz!) */}
+          <div style={{ marginTop: "15px" }}>
+            <DusmeOneri dil={dil} isHighRisk={sonuc.riskli} />
+          </div>
+          
+        </div>
+      )}
     </div>
   );
 };
