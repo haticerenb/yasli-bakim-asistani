@@ -1,27 +1,25 @@
 import React, { useState } from "react";
 
+// 1. İSMİ DÜZELTTİK: SuTakibi -> SuTakip
+// 2. PARANTEZ İÇİNİ DOLDURDUK: { dil, suMiktari, onSuEkle }
 const SuTakip = ({ dil, suMiktari, onSuEkle }) => {
-  // --- STATE (SAYAÇLAR) ---
+  
   const [counts, setCounts] = useState({
     bardak: 0,
     kucukSise: 0,
     buyukSise: 0,
   });
 
-  const dailyGoal = 2000; // Hedef (ml)
+  const dailyGoal = 2000;
 
-  // --- DAİRE ÇİZİM HESAPLAMALARI ---
+  // --- Daire Çizim Hesaplamaları ---
   const radius = 50;
   const circumference = 2 * Math.PI * radius;
   const percentage = Math.min(suMiktari / dailyGoal, 1);
   const offset = circumference - percentage * circumference;
 
-  // --- FONKSİYONLAR ---
   const addWater = (type, amount) => {
-    // 1. Ana veritabanına ekle (App.jsx üzerinden)
-    onSuEkle(amount); 
-
-    // 2. Buton üzerindeki sayacı artır
+    onSuEkle(amount); // Ana kumandaya haber ver
     setCounts((prev) => ({
       ...prev,
       [type]: prev[type] + 1,
@@ -29,35 +27,85 @@ const SuTakip = ({ dil, suMiktari, onSuEkle }) => {
   };
 
   const resetAll = () => {
-    // Suyu sıfırlamak için mevcut miktarı çıkarıyoruz
-    onSuEkle(-suMiktari); 
+    onSuEkle(-suMiktari);
     setCounts({ bardak: 0, kucukSise: 0, buyukSise: 0 });
   };
 
-  // ⚠️ DİKKAT: STİLLERİ BURAYA (containerStyle, buttonStyle vb.) EKLEMEYİ UNUTMA!
-  // (Az önceki koddan const containerStyle = ... kısımlarını buraya alabilirsin)
+  // --- STİLLER ---
+  const containerStyle = {
+    width: "100%",
+    backgroundColor: "#fff",
+    borderRadius: "16px",
+    boxShadow: "0 4px 12px rgba(0,0,0,0.05)",
+    padding: "20px",
+    boxSizing: "border-box",
+    fontFamily: "'Segoe UI', sans-serif",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    height: "100%",
+    justifyContent: "space-between"
+  };
+
+  const innerTextStyle = {
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+  };
+
+  const buttonStyle = {
+    flex: 1,
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: "10px",
+    border: "1px solid #e3f2fd",
+    backgroundColor: "#f1f8e9",
+    borderRadius: "12px",
+    cursor: "pointer",
+    position: "relative",
+    transition: "transform 0.1s",
+    minHeight: "80px",
+  };
+
+  const badgeStyle = {
+    position: "absolute",
+    top: "-5px",
+    right: "-5px",
+    backgroundColor: "#4caf50",
+    color: "white",
+    borderRadius: "50%",
+    width: "20px",
+    height: "20px",
+    fontSize: "12px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    fontWeight: "bold",
+  };
+
+  const resetButtonStyle = {
+    ...buttonStyle,
+    backgroundColor: "#ffebee",
+    border: "1px solid #ffcdd2",
+    color: "#c62828",
+    fontWeight: "bold",
+  };
 
   return (
     <div style={containerStyle}>
-      
-      {/* --- BAŞLIK --- */}
       <h3 style={{ margin: "0 0 20px 0", color: "#333", fontSize: "18px" }}>
         {dil?.suKutusu || "Günlük Su Hedefi"}
       </h3>
 
-      {/* --- YUVARLAK GRAFİK --- */}
       <div style={{ position: "relative", width: "120px", height: "120px", marginBottom: "20px" }}>
         <svg width="120" height="120" viewBox="0 0 120 120">
-          {/* Arka Halka (Gri) */}
-          <circle
-            cx="60"
-            cy="60"
-            r={radius}
-            stroke="#eee"
-            strokeWidth="10"
-            fill="none"
-          />
-          {/* Ön Halka (Mavi - Hareketli) */}
+          <circle cx="60" cy="60" r={radius} stroke="#eee" strokeWidth="10" fill="none" />
           <circle
             cx="60"
             cy="60"
@@ -73,7 +121,6 @@ const SuTakip = ({ dil, suMiktari, onSuEkle }) => {
           />
         </svg>
 
-        {/* Ortadaki Yazı */}
         <div style={innerTextStyle}>
           <span style={{ fontSize: "24px", fontWeight: "bold", color: "#2196F3", lineHeight: "1" }}>
             {suMiktari}
@@ -84,10 +131,7 @@ const SuTakip = ({ dil, suMiktari, onSuEkle }) => {
         </div>
       </div>
 
-      {/* --- BUTONLAR --- */}
       <div style={{ display: "flex", gap: "10px", width: "100%", justifyContent: "space-between" }}>
-        
-        {/* Bardak */}
         <div onClick={() => addWater("bardak", 200)} style={buttonStyle}>
           <span style={{ fontSize: "24px" }}>🥤</span>
           <span style={{ fontSize: "13px", fontWeight: "bold", color: "#1565c0", marginTop: "5px" }}>
@@ -97,7 +141,6 @@ const SuTakip = ({ dil, suMiktari, onSuEkle }) => {
           {counts.bardak > 0 && <span style={badgeStyle}>{counts.bardak}</span>}
         </div>
 
-        {/* Küçük Şişe */}
         <div onClick={() => addWater("kucukSise", 500)} style={buttonStyle}>
           <span style={{ fontSize: "24px" }}>💧</span>
           <span style={{ fontSize: "13px", fontWeight: "bold", color: "#1565c0", marginTop: "5px" }}>
@@ -107,7 +150,6 @@ const SuTakip = ({ dil, suMiktari, onSuEkle }) => {
           {counts.kucukSise > 0 && <span style={badgeStyle}>{counts.kucukSise}</span>}
         </div>
 
-        {/* Büyük Şişe */}
         <div onClick={() => addWater("buyukSise", 1500)} style={buttonStyle}>
           <span style={{ fontSize: "24px" }}>🌊</span>
           <span style={{ fontSize: "13px", fontWeight: "bold", color: "#1565c0", marginTop: "5px" }}>
@@ -117,19 +159,16 @@ const SuTakip = ({ dil, suMiktari, onSuEkle }) => {
           {counts.buyukSise > 0 && <span style={badgeStyle}>{counts.buyukSise}</span>}
         </div>
 
-        {/* Sıfırla */}
         <div onClick={resetAll} style={resetButtonStyle}>
           <span style={{ fontSize: "20px" }}>🗑️</span>
           <span style={{ fontSize: "12px", marginTop: "5px" }}>
             {dil?.sifirla || "Sıfırla"}
           </span>
         </div>
-
       </div>
     </div>
   );
 };
-
 // --- STİLLER ---
 
 const containerStyle = {
