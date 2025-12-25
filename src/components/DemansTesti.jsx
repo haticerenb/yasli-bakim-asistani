@@ -1,27 +1,93 @@
-import React, { useState } from "react";
-import DemansOneri from './DemansOneri'; // ✅ Import zaten var
-
-const DemansTesti = () => {
+const DemansTesti = ({ dil }) => {
   const [aktifSoru, setAktifSoru] = useState(0);
   const [puan, setPuan] = useState(0);
   const [testBitti, setTestBitti] = useState(false);
 
-  // AD8 Demans Tarama Testi Soruları
-  const sorular = [
-    "Karar vermede zorluk yaşıyor mu?",
-    "Hobi ve aktivitelere ilgisi azaldı mı?",
-    "Aynı şeyleri, soruları veya hikayeleri tekrar ediyor mu?",
-    "Alet kullanmada (kumanda, telefon) zorlanıyor mu?",
-    "Hangi ayda veya yılda olduğunu karıştırıyor mu?",
-    "Mali işleri (fatura, hesap) yönetmede zorlanıyor mu?",
-    "Randevularını hatırlamakta zorlanıyor mu?",
-    "Düşünce ve hafıza problemleri günlük hayatını etkiliyor mu?",
-  ];
+  // --- DİL ALGILAMA SİHİRBAZI 🧙‍♂️ ---
+  // Gelen 'dil' paketine bakarak hangi dilde olduğumuzu anlıyoruz.
+  const secilenDil =
+    dil.cikis === "Log Out" ? "en" : dil.cikis === "Ausloggen" ? "de" : "tr";
 
+  // --- SORU BANKASI 📚 ---
+  const sorular = {
+    tr: [
+      "Karar vermede zorluk yaşıyor mu?",
+      "Hobi ve aktivitelere ilgisi azaldı mı?",
+      "Aynı şeyleri, soruları veya hikayeleri tekrar ediyor mu?",
+      "Alet kullanmada (kumanda, telefon) zorlanıyor mu?",
+      "Hangi ayda veya yılda olduğunu karıştırıyor mu?",
+      "Mali işleri (fatura, hesap) yönetmede zorlanıyor mu?",
+      "Randevularını hatırlamakta zorlanıyor mu?",
+      "Düşünce ve hafıza problemleri günlük hayatını etkiliyor mu?",
+    ],
+    en: [
+      "Does he/she have difficulty making decisions?",
+      "Has interest in hobbies and activities decreased?",
+      "Does he/she repeat the same things, questions, or stories?",
+      "Does he/she have trouble using tools (remote, phone)?",
+      "Does he/she confuse the month or year?",
+      "Does he/she have trouble managing finances (bills)?",
+      "Does he/she have trouble remembering appointments?",
+      "Do thinking and memory problems affect daily life?",
+    ],
+    de: [
+      "Hat er/sie Schwierigkeiten, Entscheidungen zu treffen?",
+      "Hat das Interesse an Hobbys und Aktivitäten nachgelassen?",
+      "Wiederholt er/sie die gleichen Dinge, Fragen oder Geschichten?",
+      "Hat er/sie Schwierigkeiten, Geräte (Fernbedienung, Telefon) zu benutzen?",
+      "Verwechselt er/sie den Monat oder das Jahr?",
+      "Hat er/sie Schwierigkeiten, Finanzen (Rechnungen) zu verwalten?",
+      "Hat er/sie Schwierigkeiten, sich an Termine zu erinnern?",
+      "Beeinträchtigen Denk- und Gedächtnisprobleme das tägliche Leben?",
+    ],
+  };
+
+  // --- ARAYÜZ METİNLERİ (Yerel Sözlük) ---
+  const metinler = {
+    tr: {
+      baslik: "Demans Tarama Testi (AD8)",
+      soruBaslik: "Aşağıdaki durum değişikliğini fark ettiniz mi?",
+      evet: "Evet, Var ⚠️",
+      hayir: "Hayır, Yok ✅",
+      sonucBaslik: "Analiz Sonucu",
+      yuksekRisk: "Yüksek Risk Saptandı",
+      dusukRisk: "Düşük Risk (Normal)",
+      tekrar: "Testi Tekrarla",
+      analiz: "Analiz ediliyor...",
+    },
+    en: {
+      baslik: "Dementia Screening Test (AD8)",
+      soruBaslik: "Have you noticed the following change?",
+      evet: "Yes, There is ⚠️",
+      hayir: "No, None ✅",
+      sonucBaslik: "Analysis Result",
+      yuksekRisk: "High Risk Detected",
+      dusukRisk: "Low Risk (Normal)",
+      tekrar: "Repeat Test",
+      analiz: "Analyzing...",
+    },
+    de: {
+      baslik: "Demenz-Screening-Test (AD8)",
+      soruBaslik: "Haben Sie folgende Veränderung bemerkt?",
+      evet: "Ja, Vorhanden ⚠️",
+      hayir: "Nein, Keine ✅",
+      sonucBaslik: "Analyseergebnis",
+      yuksekRisk: "Hohes Risiko erkannt",
+      dusukRisk: "Geringes Risiko (Normal)",
+      tekrar: "Test wiederholen",
+      analiz: "Analysieren...",
+    },
+  };
+
+  // O anki dilin sorularını ve metinlerini seçiyoruz
+  const aktifSorular = sorular[secilenDil];
+  const ui = metinler[secilenDil];
+
+  // FONKSİYONLAR
   const cevapla = (riskVar) => {
     if (riskVar) setPuan(puan + 1);
 
-    if (aktifSoru < sorular.length - 1) {
+    if (aktifSoru < aktifSorular.length - 1) {
       setAktifSoru(aktifSoru + 1);
     } else {
       setTestBitti(true);
@@ -40,15 +106,15 @@ const DemansTesti = () => {
     return (
       <div style={styles.card}>
         <div style={styles.header}>
-          <span style={{ fontSize: "22px" }}>🧠 </span>
-          <h3 style={{ margin: 0, color: "#333" }}>Analiz Sonucu</h3>
+          <span style={{ fontSize: "22px" }}>🧠</span>
+          <h3 style={{ margin: 0, color: "#333" }}>{ui.sonucBaslik}</h3>
         </div>
 
         {/* Sonuç Özeti */}
         <div
           style={{
             ...styles.sonucKutu,
-            background: riskli ? "#ffebee" : "#e8f5e9",
+            backgroundColor: riskli ? "#ffebee" : "#e8f5e9",
             borderColor: riskli ? "#ef5350" : "#66bb6a",
           }}
         >
@@ -58,42 +124,38 @@ const DemansTesti = () => {
               margin: "0 0 10px 0",
             }}
           >
-            {riskli ? "Yüksek Risk Saptandı" : "Düşük Risk (Normal)"}
+            {riskli ? ui.yuksekRisk : ui.dusukRisk}
           </h2>
-          <p style={{ color: "#555", fontSize: "14px" }}>
-            {riskli
-              ? "AD8 kriterlerine göre bilişsel bozulma belirtileri var."
-              : "Şu an için belirgin bir bilişsel bozulma izlenmedi."}
-          </p>
         </div>
 
-        {/* 👇👇👇 İŞTE BURAYA EKLEDİM 👇👇👇 */}
-        {/* Risk durumuna göre öneri kartını göster */}
-        <div style={{ marginBottom: '20px' }}>
-             <DemansOneri isHighRisk={riskli} />
+        {/* ÖNERİ KARTI (Dil paketini buraya gönderiyoruz!) */}
+        <div style={{ marginBottom: "20px" }}>
+          <DemansOneri dil={dil} isHighRisk={riskli} />
         </div>
-        {/* 👆👆👆 EKLEME BİTTİ 👆👆👆 */}
 
         <button onClick={sifirla} style={styles.restartBtn}>
-          Testi Tekrarla
+          🔄 {ui.tekrar}
         </button>
       </div>
     );
   }
 
-  // --- SORU EKRANI (SLAYT) ---
-  const ilerlemeYuzdesi = ((aktifSoru + 1) / sorular.length) * 100;
+  // ilerleme çubuğu hesabı
+  const ilerlemeYuzdesi = ((aktifSoru + 1) / aktifSorular.length) * 100;
 
+  // --- SORU EKRANI ---
   return (
     <div style={styles.card}>
       {/* Başlık ve İlerleme */}
       <div style={styles.header}>
         <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-          <span style={{ fontSize: "22px" }}>🧠</span>
-          <h3 style={{ margin: 0, color: "#333" }}>Demans Testi (AD8)</h3>
+          {/* Başlığı artık 'dil' paketinden alıyoruz */}
+          <h3 style={{ margin: 0, color: "#333" }}>🧠 {dil.demans}</h3>
         </div>
-        <span style={{ fontSize: "12px", color: "#888", fontWeight: "bold" }}>
-          {aktifSoru + 1} / {sorular.length}
+        <span
+          style={{ fontSize: "12px", color: "#888", fontWeight: "bold" }}
+        >
+          {aktifSoru + 1} / {aktifSorular.length}
         </span>
       </div>
 
@@ -106,19 +168,26 @@ const DemansTesti = () => {
 
       {/* Soru Alanı */}
       <div style={styles.soruAlani}>
-        <h4 style={styles.soruMetni}>{sorular[aktifSoru]}</h4>
-        <p style={{ fontSize: "13px", color: "#666", marginBottom: "20px" }}>
-          Son zamanlarda bu konuda bir <strong>değişiklik/bozulma</strong> fark
-          ettiniz mi?
+        <h4 style={styles.soruMetni}>{aktifSorular[aktifSoru]}</h4>
+        <p
+          style={{ fontSize: "13px", color: "#666", marginBottom: "20px" }}
+        >
+          {ui.soruBaslik}
         </p>
 
         {/* Butonlar */}
         <div style={styles.btnGroup}>
-          <button onClick={() => cevapla(true)} style={styles.evetBtn}>
-            <span style={{ fontSize: "18px" }}>⚠️</span> Evet, Var
+          <button
+            onClick={() => cevapla(true)}
+            style={styles.evetBtn}
+          >
+            {ui.evet}
           </button>
-          <button onClick={() => cevapla(false)} style={styles.hayirBtn}>
-            <span style={{ fontSize: "18px" }}>✅</span> Hayır, Yok
+          <button
+            onClick={() => cevapla(false)}
+            style={styles.hayirBtn}
+          >
+            {ui.hayir}
           </button>
         </div>
       </div>

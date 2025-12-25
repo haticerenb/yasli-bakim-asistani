@@ -1,125 +1,204 @@
 import React, { useState } from "react";
-import OneriKarti from './KirilganlikOneri';
+import KirilganlikOneri from "./KirilganlikOneri";
 
-const KirilganlikTesti = () => {
-  const [sorular, setSorular] = useState({
-    s1: null,
-    s2: null,
-    s3: null,
-    s4: null,
-    s5: null,
+const KirilganlikTesti = ({ dil }) => {
+  // Cevapları tuttuğumuz yer (null = henüz cevaplanmadı)
+  const [cevaplar, setCevaplar] = useState({
+    s1: null, // Kilo kaybı
+    s2: null, // Yorgunluk
+    s3: null, // Yürüme hızı
+    s4: null, // El sıkma gücü
+    s5: null, // Fiziksel aktivite
   });
+  
   const [sonuc, setSonuc] = useState(null);
 
-  const cevapla = (k, v) => setSorular({ ...sorular, [k]: v });
+  // --- DİL ALGILAMA SİHİRBAZI 🧙‍♂️ ---
+  // Hangi dilde olduğumuzu 'cikis' butonundaki yazıdan anlıyoruz
+  const secilenDil =
+    dil.cikis === "Log Out" ? "en" : dil.cikis === "Ausloggen" ? "de" : "tr";
 
-  const hesapla = () => {
-    if (Object.values(sorular).includes(null))
-      return alert("Tüm soruları cevaplayın.");
-    
-    const puan = Object.values(sorular).filter((v) => v).length;
-
-    // BURAYI GÜNCELLEDİM: Puan bilgisini de state'e ekliyoruz ki aşağıda kullanalım
-    if (puan >= 3)
-      setSonuc({ t: "Kırılgan (Yüksek Risk)", c: "#ffebee", fc: "#c62828", puan: puan });
-    else if (puan >= 1)
-      setSonuc({
-        t: "Kırılgan Öncesi (Orta Risk)",
-        c: "#fff3e0",
-        fc: "#ef6c00",
-        puan: puan
-      });
-    else 
-      setSonuc({ t: "Sağlam (Düşük Risk)", c: "#e8f5e9", fc: "#2e7d32", puan: puan });
+  // --- ÇEVİRİ DEPOSU (Sorular ve Sonuçlar) ---
+  const metinler = {
+    tr: {
+      baslik: "Kırılganlık Testi",
+      sorular: [
+        { id: "s1", metin: "Son 1 yılda istemsiz kilo kaybı var mı?" },
+        { id: "s2", metin: "Kendinizi sık sık yorgun hisseder misiniz?" },
+        { id: "s3", metin: "Yürüyüş hızınız yavaşladı mı?" },
+        { id: "s4", metin: "El sıkma gücünüz azaldı mı?" },
+        { id: "s5", metin: "Fiziksel aktiviteniz çok azaldı mı?" }
+      ],
+      evet: "Evet",
+      hayir: "Hayır",
+      analizBtn: "Analiz Et",
+      uyari: "Lütfen tüm soruları cevaplayın.",
+      sonucBaslik: "Analiz Sonucu",
+      durumlar: {
+        saglam: "Sağlam (Düşük Risk) ✅",
+        oncesi: "Kırılgan Öncesi (Orta Risk) ⚠️",
+        kirilgan: "Kırılgan (Yüksek Risk) 🚨"
+      }
+    },
+    en: {
+      baslik: "Frailty Test",
+      sorular: [
+        { id: "s1", metin: "Unintentional weight loss in the last year?" },
+        { id: "s2", metin: "Do you often feel tired?" },
+        { id: "s3", metin: "Has your walking speed slowed down?" },
+        { id: "s4", metin: "Has your grip strength decreased?" },
+        { id: "s5", metin: "Has your physical activity decreased significantly?" }
+      ],
+      evet: "Yes",
+      hayir: "No",
+      analizBtn: "Analyze",
+      uyari: "Please answer all questions.",
+      sonucBaslik: "Analysis Result",
+      durumlar: {
+        saglam: "Robust (Low Risk) ✅",
+        oncesi: "Pre-Frail (Medium Risk) ⚠️",
+        kirilgan: "Frail (High Risk) 🚨"
+      }
+    },
+    de: {
+      baslik: "Gebrechlichkeitstest",
+      sorular: [
+        { id: "s1", metin: "Unbeabsichtigter Gewichtsverlust im letzten Jahr?" },
+        { id: "s2", metin: "Fühlen Sie sich oft müde?" },
+        { id: "s3", metin: "Hat sich Ihre Gehgeschwindigkeit verlangsamt?" },
+        { id: "s4", metin: "Hat Ihre Griffkraft abgenommen?" },
+        { id: "s5", metin: "Hat Ihre körperliche Aktivität stark abgenommen?" }
+      ],
+      evet: "Ja",
+      hayir: "Nein",
+      analizBtn: "Analysieren",
+      uyari: "Bitte beantworten Sie alle Fragen.",
+      sonucBaslik: "Analyseergebnis",
+      durumlar: {
+        saglam: "Robust (Geringes Risiko) ✅",
+        oncesi: "Vorgebrechlich (Mittleres Risiko) ⚠️",
+        kirilgan: "Gebrechlich (Hohes Risiko) 🚨"
+      }
+    }
   };
 
+  // O anki dilin metinlerini seçiyoruz
+  const ui = metinler[secilenDil];
+
+  // --- FONKSİYONLAR ---
+  const cevapla = (soruId, deger) => {
+    setCevaplar({ ...cevaplar, [soruId]: deger });
+  };
+
+  const hesapla = () => {
+    // 1. Boş soru var mı kontrol et
+    if (Object.values(cevaplar).includes(null)) {
+      alert(ui.uyari);
+      return;
+    }
+
+    // 2. Puanı Hesapla (Her 'Evet' 1 puan)
+    const puan = Object.values(cevaplar).filter((c) => c === true).length;
+
+    // 3. Durumu Belirle
+    let sonucMetni = "";
+    let arkaRenk = "";
+    let yaziRenk = "";
+
+    if (puan >= 3) {
+      sonucMetni = ui.durumlar.kirilgan;
+      arkaRenk = "#ffebee";
+      yaziRenk = "#c62828";
+    } else if (puan >= 1) {
+      sonucMetni = ui.durumlar.oncesi;
+      arkaRenk = "#fff3e0";
+      yaziRenk = "#ef6c00";
+    } else {
+      sonucMetni = ui.durumlar.saglam;
+      arkaRenk = "#e8f5e9";
+      yaziRenk = "#2e7d32";
+    }
+
+    setSonuc({
+      metin: sonucMetni,
+      bg: arkaRenk,
+      color: yaziRenk,
+      puan: puan
+    });
+  };
+
+  // --- RENDER ---
   return (
     <div style={styles.card}>
-      <h3 style={styles.head}>🦴 Kırılganlık Testi</h3>
-      <div style={styles.body}>
-        <Soru
-          t="1. Son 1 yılda istemsiz kilo kaybı?"
-          k="s1"
-          c={sorular}
-          f={cevapla}
-        />
-        <Soru
-          t="2. Kendinizi sık sık yorgun hisseder misiniz?"
-          k="s2"
-          c={sorular}
-          f={cevapla}
-        />
-        <Soru
-          t="3. Yürüyüş hızınız yavaşladı mı?"
-          k="s3"
-          c={sorular}
-          f={cevapla}
-        />
-        <Soru
-          t="4. El sıkma gücünüz azaldı mı?"
-          k="s4"
-          c={sorular}
-          f={cevapla}
-        />
-        <Soru
-          t="5. Fiziksel aktiviteniz çok azaldı mı?"
-          k="s5"
-          c={sorular}
-          f={cevapla}
-        />
+      {/* BAŞLIK */}
+      <div style={styles.header}>
+        <span style={{ fontSize: "22px" }}>🏃‍♂️</span>
+        <h3 style={{ margin: 0, color: "#333" }}>{ui.baslik}</h3>
       </div>
 
-      {sonuc ? (
-        <>
-          {/* Sonuç Kutusu */}
-          <div style={{ ...styles.res, background: sonuc.c, color: sonuc.fc }}>
-            SONUÇ: {sonuc.t}
+      {/* SORULAR */}
+      <div style={styles.soruListesi}>
+        {ui.sorular.map((soru) => (
+          <div key={soru.id} style={styles.soruSatiri}>
+            <p style={styles.soruMetni}>{soru.metin}</p>
+            <div style={styles.btnGroup}>
+              <button
+                onClick={() => cevapla(soru.id, true)}
+                style={{
+                  ...styles.btn,
+                  backgroundColor: cevaplar[soru.id] === true ? "#ef5350" : "#eee",
+                  color: cevaplar[soru.id] === true ? "white" : "#333",
+                }}
+              >
+                {ui.evet}
+              </button>
+              <button
+                onClick={() => cevapla(soru.id, false)}
+                style={{
+                  ...styles.btn,
+                  backgroundColor: cevaplar[soru.id] === false ? "#66bb6a" : "#eee",
+                  color: cevaplar[soru.id] === false ? "white" : "#333",
+                }}
+              >
+                {ui.hayir}
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* SONUÇ KUTUSU (Varsa Göster) */}
+      {sonuc && (
+        <div style={{ marginTop: "20px", animation: "fadeIn 0.5s" }}>
+          <div
+            style={{
+              padding: "15px",
+              borderRadius: "8px",
+              textAlign: "center",
+              backgroundColor: sonuc.bg,
+              color: sonuc.color,
+              border: `1px solid ${sonuc.color}`,
+              marginBottom: "20px",
+            }}
+          >
+            <h3 style={{ margin: 0 }}>{sonuc.metin}</h3>
           </div>
 
-          {/* 👇 İŞTE BURAYA KOYUYORUZ 👇 */}
-          {/* Sonuç hesaplandıysa Öneri Kartı'nı göster */}
-          {/* Senin koduna göre puan 3 ve üzeri "Yüksek Risk" sayılıyor */}
-          <div style={{ marginTop: '10px' }}>
-            <OneriKarti dil={dil} isHighRisk={sonuc.puan >= 3} />
-          </div>
-        </>
-      ) : (
-        <button onClick={hesapla} style={styles.btn}>
-          Analiz Et
+          {/* ÖNERİ KARTINI ÇAĞIRIYORUZ */}
+          {/* Buraya 'dil' paketini gönderiyoruz ki içindeki yazılar da değişsin */}
+          <KirilganlikOneri dil={dil} isHighRisk={sonuc.puan >= 3} />
+        </div>
+      )}
+
+      {/* ANALİZ BUTONU (Sonuç yoksa göster) */}
+      {!sonuc && (
+        <button onClick={hesapla} style={styles.analizBtn}>
+          📊 {ui.analizBtn}
         </button>
       )}
     </div>
   );
 };
-
-const Soru = ({ t, k, c, f }) => (
-  <div style={styles.row}>
-    <span>{t}</span>
-    <div>
-      <button
-        onClick={() => f(k, true)}
-        style={{
-          ...styles.sb,
-          background: c[k] === true ? "#ef5350" : "#eee",
-          color: c[k] === true ? "#fff" : "#333",
-        }}
-      >
-        Evet
-      </button>
-      <button
-        onClick={() => f(k, false)}
-        style={{
-          ...styles.sb,
-          background: c[k] === false ? "#66bb6a" : "#eee",
-          color: c[k] === false ? "#fff" : "#333",
-        }}
-      >
-        Hayır
-      </button>
-    </div>
-  </div>
-);
-
 const styles = {
   card: {
     background: "white",

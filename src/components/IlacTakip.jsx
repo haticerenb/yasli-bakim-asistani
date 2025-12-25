@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 const ALARM_SESI =
   "https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3";
 
-const IlacTakip = ({ ilaclar, onIlacEkle, onIlacSil }) => {
+const IlacTakip = ({ dil, ilaclar, onIlacEkle, onIlacSil }) => {
   // --- STATE TANIMLARI ---
   const [girilenYazi, setGirilenYazi] = useState("");
   const [ekstraSuGerekir, setEkstraSuGerekir] = useState(false);
@@ -49,11 +49,13 @@ const IlacTakip = ({ ilaclar, onIlacEkle, onIlacSil }) => {
           if (aktifAlarmlar.includes(ilac.id) && ilac.saat === suAnkiSaat) {
             const ses = new Audio(ALARM_SESI);
             ses.play().catch((e) => console.log("Ses hatası:", e));
-            alert(`⏰ İLAÇ VAKTİ!\n\n${ilac.ad} ilacını içmen gerekiyor.`);
+            // Alarm mesajı (Şimdilik standart tutuyoruz, istersen burayı da çeviririz)
+            alert(`⏰ ${ilac.ad} \n(Alarm)`);
           }
         });
       }
     }, 1000);
+
     return () => clearInterval(zamanlayici);
   }, [aktifAlarmlar, ilaclar]);
 
@@ -79,7 +81,7 @@ const IlacTakip = ({ ilaclar, onIlacEkle, onIlacSil }) => {
       {/* BAŞLIK */}
       <div style={styles.header}>
         <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-          <h3 style={{ margin: 0, color: "#333" }}>💊 İlaç Takip</h3>
+          <h3 style={{ margin: 0, color: "#333" }}>💊 {dil.ilacKutusu}</h3>
           <span
             style={{
               fontSize: "12px",
@@ -89,7 +91,7 @@ const IlacTakip = ({ ilaclar, onIlacEkle, onIlacSil }) => {
               borderRadius: "10px",
             }}
           >
-            {ilaclar.length} Adet
+            {ilaclar.length}
           </span>
         </div>
       </div>
@@ -102,7 +104,11 @@ const IlacTakip = ({ ilaclar, onIlacEkle, onIlacSil }) => {
             <li key={ilac.id} style={styles.listItem}>
               <div style={{ flex: 1 }}>
                 <div
-                  style={{ display: "flex", alignItems: "center", gap: "8px" }}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "8px",
+                  }}
                 >
                   <strong style={{ fontSize: "15px", color: "#333" }}>
                     {ilac.ad}
@@ -116,18 +122,26 @@ const IlacTakip = ({ ilaclar, onIlacEkle, onIlacSil }) => {
                       borderRadius: "8px",
                       fontSize: "10px",
                       fontWeight: "bold",
-                      background: ilac.suEtkisi >= 500 ? "#e3f2fd" : "#f5f5f5",
+                      background:
+                        ilac.suEtkisi >= 500 ? "#e3f2fd" : "#f5f5f5",
                       color: ilac.suEtkisi >= 500 ? "#1976d2" : "#757575",
                     }}
                   >
-                    {ilac.suEtkisi >= 500 ? "💧 +500ml" : "💊 Normal"}
+                    {ilac.suEtkisi >= 500 ? "💧 +500ml" : "🏷️ Normal"}
                   </div>
                 </div>
                 <div
-                  style={{ fontSize: "12px", color: "#666", marginTop: "4px" }}
+                  style={{
+                    fontSize: "12px",
+                    color: "#666",
+                    marginTop: "4px",
+                  }}
                 >
-                  🕒 {ilac.saat} •{" "}
-                  <span style={{ fontWeight: "500" }}>{ilac.tokluk}</span>
+                  {ilac.saat} •{" "}
+                  <span style={{ fontWeight: "500" }}>
+                    {/* Burası akıllı kısım: Kayıtlı bilgi "Tok" ise dil.tok yazar, değilse dil.ac */}
+                    {ilac.tokluk === "Tok" ? dil.tok : dil.ac}
+                  </span>
                 </div>
               </div>
 
@@ -146,16 +160,17 @@ const IlacTakip = ({ ilaclar, onIlacEkle, onIlacSil }) => {
                   onClick={() => onIlacSil(ilac.id)}
                   style={{
                     ...styles.actionButton,
-                    backgroundColor: "#ffEBEE",
+                    backgroundColor: "#ffebee",
                     color: "#d32f2f",
                   }}
                 >
-                  ❌
+                  🗑️
                 </button>
               </div>
             </li>
           );
         })}
+
         {ilaclar.length === 0 && (
           <p
             style={{
@@ -165,7 +180,8 @@ const IlacTakip = ({ ilaclar, onIlacEkle, onIlacSil }) => {
               marginTop: "20px",
             }}
           >
-            Listen boş.
+            {/* Liste boşsa görünecek ikon */}
+            💊
           </p>
         )}
       </ul>
@@ -174,7 +190,7 @@ const IlacTakip = ({ ilaclar, onIlacEkle, onIlacSil }) => {
       <div style={styles.inputArea}>
         <input
           type="text"
-          placeholder="İlaç adı giriniz..."
+          placeholder={dil.ilacAdi} // DİL DESTEĞİ
           value={girilenYazi}
           onChange={(e) => setGirilenYazi(e.target.value)}
           style={styles.input}
@@ -192,12 +208,12 @@ const IlacTakip = ({ ilaclar, onIlacEkle, onIlacSil }) => {
             onChange={(e) => setToklukDurumu(e.target.value)}
             style={styles.selectInput}
           >
-            <option value="Tok">Tok</option>
-            <option value="Aç">Aç</option>
-            <option value="Yemekle">Yemekle</option>
+            {/* Value değerleri "Tok/Aç" olarak sabit kalmalı ki veritabanı karışmasın, ama görünen yazı değişiyor */}
+            <option value="Tok">{dil.tok}</option>
+            <option value="Aç">{dil.ac}</option>
           </select>
           <button onClick={ekleButonunaBasinca} style={styles.addButton}>
-            Ekle
+            {dil.ilacEkle}
           </button>
         </div>
 
@@ -208,7 +224,7 @@ const IlacTakip = ({ ilaclar, onIlacEkle, onIlacSil }) => {
             onChange={(e) => setEkstraSuGerekir(e.target.checked)}
             style={{ accentColor: "#3b82f6", width: "16px", height: "16px" }}
           />
-          <span>Bu ilaç idrar söktürücü (+500ml su)</span>
+          <span>{dil.susatir}</span>
         </label>
       </div>
     </div>
