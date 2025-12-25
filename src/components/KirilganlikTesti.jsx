@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import KirilganlikOneri from "./KirilganlikOneri";
 
 const KirilganlikTesti = ({ dil }) => {
-  // Cevapları tuttuğumuz yer (null = henüz cevaplanmadı)
+  // --- STATE (Hafıza) ---
   const [cevaplar, setCevaplar] = useState({
     s1: null, // Kilo kaybı
     s2: null, // Yorgunluk
@@ -13,15 +13,14 @@ const KirilganlikTesti = ({ dil }) => {
   
   const [sonuc, setSonuc] = useState(null);
 
-  // --- DİL ALGILAMA SİHİRBAZI 🧙‍♂️ ---
-  // Hangi dilde olduğumuzu 'cikis' butonundaki yazıdan anlıyoruz
+  // --- DİL ALGILAMA ---
   const secilenDil =
-    dil.cikis === "Log Out" ? "en" : dil.cikis === "Ausloggen" ? "de" : "tr";
+    dil?.cikis === "Log Out" ? "en" : dil?.cikis === "Ausloggen" ? "de" : "tr";
 
-  // --- ÇEVİRİ DEPOSU (Sorular ve Sonuçlar) ---
+  // --- ÇEVİRİ DEPOSU ---
   const metinler = {
     tr: {
-      baslik: "Kırılganlık Testi",
+      baslik: "Kırılganlık Taraması",
       sorular: [
         { id: "s1", metin: "Son 1 yılda istemsiz kilo kaybı var mı?" },
         { id: "s2", metin: "Kendinizi sık sık yorgun hisseder misiniz?" },
@@ -31,17 +30,22 @@ const KirilganlikTesti = ({ dil }) => {
       ],
       evet: "Evet",
       hayir: "Hayır",
-      analizBtn: "Analiz Et",
+      analizBtn: "Risk Hesapla",
       uyari: "Lütfen tüm soruları cevaplayın.",
       sonucBaslik: "Analiz Sonucu",
       durumlar: {
         saglam: "Sağlam (Düşük Risk) ✅",
         oncesi: "Kırılgan Öncesi (Orta Risk) ⚠️",
         kirilgan: "Kırılgan (Yüksek Risk) 🚨"
+      },
+      detaylar: {
+        saglam: "Harika! Durumunuzu korumak için aktif kalmaya devam edin.",
+        oncesi: "Dikkatli olunmalı. Önleyici tedbirler için bir uzmana danışın.",
+        kirilgan: "Kapsamlı bir geriatrik değerlendirme önerilir."
       }
     },
     en: {
-      baslik: "Frailty Test",
+      baslik: "Frailty Screening",
       sorular: [
         { id: "s1", metin: "Unintentional weight loss in the last year?" },
         { id: "s2", metin: "Do you often feel tired?" },
@@ -51,17 +55,22 @@ const KirilganlikTesti = ({ dil }) => {
       ],
       evet: "Yes",
       hayir: "No",
-      analizBtn: "Analyze",
+      analizBtn: "Calculate Risk",
       uyari: "Please answer all questions.",
       sonucBaslik: "Analysis Result",
       durumlar: {
         saglam: "Robust (Low Risk) ✅",
         oncesi: "Pre-Frail (Medium Risk) ⚠️",
         kirilgan: "Frail (High Risk) 🚨"
+      },
+      detaylar: {
+        saglam: "Great! Stay active to maintain your condition.",
+        oncesi: "Caution needed. Consult a specialist for preventive measures.",
+        kirilgan: "A comprehensive geriatric assessment is recommended."
       }
     },
     de: {
-      baslik: "Gebrechlichkeitstest",
+      baslik: "Gebrechlichkeits-Screening",
       sorular: [
         { id: "s1", metin: "Unbeabsichtigter Gewichtsverlust im letzten Jahr?" },
         { id: "s2", metin: "Fühlen Sie sich oft müde?" },
@@ -71,82 +80,94 @@ const KirilganlikTesti = ({ dil }) => {
       ],
       evet: "Ja",
       hayir: "Nein",
-      analizBtn: "Analysieren",
+      analizBtn: "Risiko berechnen",
       uyari: "Bitte beantworten Sie alle Fragen.",
       sonucBaslik: "Analyseergebnis",
       durumlar: {
         saglam: "Robust (Geringes Risiko) ✅",
         oncesi: "Vorgebrechlich (Mittleres Risiko) ⚠️",
         kirilgan: "Gebrechlich (Hohes Risiko) 🚨"
+      },
+      detaylar: {
+        saglam: "Großartig! Bleiben Sie aktiv, um Ihren Zustand zu erhalten.",
+        oncesi: "Vorsicht geboten. Konsultieren Sie einen Spezialisten für vorbeugende Maßnahmen.",
+        kirilgan: "Eine umfassende geriatrische Beurteilung wird empfohlen."
       }
     }
   };
 
-  // O anki dilin metinlerini seçiyoruz
   const ui = metinler[secilenDil];
 
   // --- FONKSİYONLAR ---
   const cevapla = (soruId, deger) => {
     setCevaplar({ ...cevaplar, [soruId]: deger });
+    setSonuc(null); // Yeni cevap verilince eski sonucu gizle
   };
 
   const hesapla = () => {
-    // 1. Boş soru var mı kontrol et
     if (Object.values(cevaplar).includes(null)) {
       alert(ui.uyari);
       return;
     }
 
-    // 2. Puanı Hesapla (Her 'Evet' 1 puan)
     const puan = Object.values(cevaplar).filter((c) => c === true).length;
 
-    // 3. Durumu Belirle
     let sonucMetni = "";
+    let detayMetni = "";
     let arkaRenk = "";
     let yaziRenk = "";
 
     if (puan >= 3) {
       sonucMetni = ui.durumlar.kirilgan;
+      detayMetni = ui.detaylar.kirilgan;
       arkaRenk = "#ffebee";
       yaziRenk = "#c62828";
     } else if (puan >= 1) {
       sonucMetni = ui.durumlar.oncesi;
+      detayMetni = ui.detaylar.oncesi;
       arkaRenk = "#fff3e0";
       yaziRenk = "#ef6c00";
     } else {
       sonucMetni = ui.durumlar.saglam;
+      detayMetni = ui.detaylar.saglam;
       arkaRenk = "#e8f5e9";
       yaziRenk = "#2e7d32";
     }
 
     setSonuc({
       metin: sonucMetni,
+      detay: detayMetni,
       bg: arkaRenk,
       color: yaziRenk,
       puan: puan
     });
   };
 
-  // --- RENDER ---
+  // --- RENDER (GÖRÜNÜM - DÜŞME RİSKİ STİLİNDE) ---
   return (
     <div style={styles.card}>
-      {/* BAŞLIK */}
+      {/* Başlık */}
       <div style={styles.header}>
         <span style={{ fontSize: "22px" }}>🏃‍♂️</span>
         <h3 style={{ margin: 0, color: "#333" }}>{ui.baslik}</h3>
       </div>
 
-      {/* SORULAR */}
-      <div style={styles.soruListesi}>
+      {/* Sorular Listesi (Gri Kutulu Stil) */}
+      <div style={styles.container}>
         {ui.sorular.map((soru) => (
-          <div key={soru.id} style={styles.soruSatiri}>
-            <p style={styles.soruMetni}>{soru.metin}</p>
+          <div key={soru.id} style={styles.row}>
+            {/* Soru Metni */}
+            <p style={{ margin: 0, flex: 1, fontSize: "14px", color: "#555" }}>
+              {soru.metin}
+            </p>
+
+            {/* Evet/Hayır Butonları */}
             <div style={styles.btnGroup}>
               <button
                 onClick={() => cevapla(soru.id, true)}
                 style={{
                   ...styles.btn,
-                  backgroundColor: cevaplar[soru.id] === true ? "#ef5350" : "#eee",
+                  background: cevaplar[soru.id] === true ? "#ef5350" : "#f0f0f0",
                   color: cevaplar[soru.id] === true ? "white" : "#333",
                 }}
               >
@@ -156,7 +177,7 @@ const KirilganlikTesti = ({ dil }) => {
                 onClick={() => cevapla(soru.id, false)}
                 style={{
                   ...styles.btn,
-                  backgroundColor: cevaplar[soru.id] === false ? "#66bb6a" : "#eee",
+                  background: cevaplar[soru.id] === false ? "#66bb6a" : "#f0f0f0",
                   color: cevaplar[soru.id] === false ? "white" : "#333",
                 }}
               >
@@ -167,88 +188,102 @@ const KirilganlikTesti = ({ dil }) => {
         ))}
       </div>
 
-      {/* SONUÇ KUTUSU (Varsa Göster) */}
-      {sonuc && (
-        <div style={{ marginTop: "20px", animation: "fadeIn 0.5s" }}>
-          <div
-            style={{
-              padding: "15px",
-              borderRadius: "8px",
-              textAlign: "center",
-              backgroundColor: sonuc.bg,
-              color: sonuc.color,
-              border: `1px solid ${sonuc.color}`,
-              marginBottom: "20px",
-            }}
-          >
-            <h3 style={{ margin: 0 }}>{sonuc.metin}</h3>
-          </div>
-
-          {/* ÖNERİ KARTINI ÇAĞIRIYORUZ */}
-          {/* Buraya 'dil' paketini gönderiyoruz ki içindeki yazılar da değişsin */}
-          <KirilganlikOneri dil={dil} isHighRisk={sonuc.puan >= 3} />
-        </div>
-      )}
-
-      {/* ANALİZ BUTONU (Sonuç yoksa göster) */}
+      {/* Hesapla Butonu */}
       {!sonuc && (
-        <button onClick={hesapla} style={styles.analizBtn}>
+        <button onClick={hesapla} style={styles.calcBtn}>
           📊 {ui.analizBtn}
         </button>
+      )}
+
+      {/* SONUÇ ALANI */}
+      {sonuc && (
+        <div style={{ marginTop: "20px", animation: "fadeIn 0.5s" }}>
+          
+          {/* Sonuç Kutusu */}
+          <div
+            style={{
+              ...styles.resultBox,
+              borderLeft: `5px solid ${sonuc.color}`,
+              backgroundColor: sonuc.bg,
+            }}
+          >
+            <h4 style={{ margin: 0, color: sonuc.color, fontSize: "16px" }}>
+              {sonuc.metin}
+            </h4>
+            <p style={{ margin: "5px 0 0", fontSize: "13px", color: "#333" }}>
+              {sonuc.detay}
+            </p>
+          </div>
+
+          {/* Öneri Kartı */}
+          <div style={{ marginTop: "15px" }}>
+             <KirilganlikOneri dil={dil} isHighRisk={sonuc.puan >= 3} />
+          </div>
+        </div>
       )}
     </div>
   );
 };
+
+// --- YENİ STİLLER (DÜŞME RİSKİ İLE AYNI) ---
 const styles = {
   card: {
     background: "white",
     padding: "20px",
     borderRadius: "12px",
     boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
+    maxWidth: "100%",
   },
-  head: {
-    margin: "0 0 15px 0",
-    color: "#1a3b5d",
-    borderBottom: "2px solid #f0f2f5",
+  header: {
+    display: "flex",
+    alignItems: "center",
+    gap: "10px",
+    marginBottom: "20px",
+    borderBottom: "1px solid #eee",
     paddingBottom: "10px",
   },
-  body: { display: "flex", flexDirection: "column", gap: "10px" },
+  container: {
+    display: "flex",
+    flexDirection: "column",
+    gap: "12px",
+  },
   row: {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
-    fontSize: "14px",
-    background: "#f9fafb",
+    background: "#fafafa", // O sevdiğin gri tonu
     padding: "10px",
     borderRadius: "8px",
+    gap: "10px",
   },
-  sb: {
-    border: "none",
-    padding: "6px 12px",
-    borderRadius: "6px",
-    marginLeft: "5px",
-    cursor: "pointer",
-    fontWeight: "bold",
-    transition: "0.2s",
+  btnGroup: {
+    display: "flex",
+    gap: "8px",
   },
   btn: {
+    padding: "6px 12px",
+    border: "none",
+    borderRadius: "6px",
+    cursor: "pointer",
+    fontSize: "12px",
+    fontWeight: "bold",
+    transition: "all 0.2s",
+  },
+  calcBtn: {
     width: "100%",
-    marginTop: "15px",
+    marginTop: "20px",
     padding: "12px",
-    background: "#1a3b5d",
+    background: "#3b82f6",
     color: "white",
     border: "none",
     borderRadius: "8px",
+    fontSize: "15px",
     fontWeight: "bold",
     cursor: "pointer",
   },
-  res: {
-    marginTop: "15px",
-    padding: "12px",
+  resultBox: {
+    padding: "15px",
     borderRadius: "8px",
-    textAlign: "center",
-    fontWeight: "bold",
-    border: "1px solid currentColor",
   },
 };
 
