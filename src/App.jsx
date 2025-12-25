@@ -279,15 +279,7 @@ function App() {
               suMiktari={suMiktari}
               onSuEkle={(m) => setSuMiktari((prev) => Math.max(0, prev + m))}
             />
-            <DemansTesti dil={metin} />
-          </div>
-
-          {/* 2. KUTU: ARTIK BURASI İLAÇ KISMI (Kodda sona aldık) */}
-          {/* Telefonda profilin ALTINDA görünecek */}
-          <div
-            style={{ display: "flex", flexDirection: "column", gap: "25px" }}
-          >
-            <div style={{ height: "600px" }}>
+          <div style={{ height: "600px" }}>
               <IlacTakip dil={metin}
                 ilaclar={ilaclar}
                 onIlacEkle={(ad, ekstra, saat, tok) =>
@@ -308,6 +300,15 @@ function App() {
               />
             </div>
             {/* İlaç kutusunun altına bunları ekle: */}
+          </div>
+
+          {/* 2. KUTU: ARTIK BURASI İLAÇ KISMI (Kodda sona aldık) */}
+          {/* Telefonda profilin ALTINDA görünecek */}
+          <div
+            style={{ display: "flex", flexDirection: "column", gap: "25px" }}
+          >
+              <DemansTesti dil={metin} />
+            
             <DusmeRiski dil={metin}/>
             <div style={{ marginTop: "25px" }}></div> {/* Araya boşluk olsun */}
             <KirilganlikTesti dil={metin} />
