@@ -124,7 +124,7 @@ const IlacTakip = ({ dil, ilaclar, onIlacEkle, onIlacSil }) => {
                       fontWeight: "bold",
                       background:
                         ilac.suEtkisi >= 500 ? "#e3f2fd" : "#f5f5f5",
-                      color: ilac.suEtkisi >= 500 ? "#1976d2" : "#757575",
+                      color: ilac.suEtkisi >= 500 ? "#2076cbff" : "#757575",
                     }}
                   >
                     {ilac.suEtkisi >= 500 ? "💧 +500ml" : "🏷️ Normal"}
@@ -181,7 +181,7 @@ const IlacTakip = ({ dil, ilaclar, onIlacEkle, onIlacSil }) => {
             }}
           >
             {/* Liste boşsa görünecek ikon */}
-            💊
+            
           </p>
         )}
       </ul>
@@ -309,7 +309,7 @@ const styles = {
     color: "#000"
   },
   addButton: {
-    background: "#3b82f6",
+    background: "#142c55ff",
     color: "white",
     border: "none",
     padding: "0 15px",

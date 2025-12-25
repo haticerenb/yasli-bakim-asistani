@@ -170,7 +170,7 @@ function App() {
           height: "100vh",
         }}
       >
-        Yükleniyor...
+       {metin.yukleniyor || "Yükleniyor..."} ⌛
       </div>
     );
 
@@ -181,6 +181,9 @@ function App() {
         onGiris={sistemeGirisYap}
         onKayit={sistemeKayitOl}
         onGoogleGiris={googleIleGiris}
+        dil={metin}                     // 👈 Dil paketini gönderdik
+        secilenDil={secilenDil}         // 👈 Hangi dil seçili?
+        setSecilenDil={setSecilenDil}   // 👈 Dili değiştirme yetkisi
       />
     );
   }
@@ -250,7 +253,7 @@ function App() {
             fontSize: "2.5rem",
           }}
         >
-          Yaşlı Dostu Bakım Asistanı
+          {metin.baslik || "Yaşlı Bakım Asistanı"}
         </h1>
         <div
           style={{

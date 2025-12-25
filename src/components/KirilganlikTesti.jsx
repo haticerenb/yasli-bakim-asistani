@@ -273,7 +273,7 @@ const styles = {
     width: "100%",
     marginTop: "20px",
     padding: "12px",
-    background: "#3b82f6",
+    background: "#0c2041ff",
     color: "white",
     border: "none",
     borderRadius: "8px",

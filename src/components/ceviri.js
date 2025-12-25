@@ -27,6 +27,16 @@ export const ceviriler = {
     kucuk: "Küçük",
     buyuk: "Büyük",
     sifirla: "Sıfırla",
+    yukleniyor: "Yükleniyor...",
+    girisBaslik: "Giriş Yap",
+    kayitBaslik: "Kayıt Ol",
+    email: "E-posta Adresi",
+    sifre: "Şifre",
+    girisButon: "Giriş Yap",
+    kayitButon: "Kayıt Ol",
+    googleButon: "Google ile Giriş",
+    hesapYok: "Hesabın yok mu? Kayıt Ol",
+    hesapVar: "Zaten hesabın var mı? Giriş Yap",
     // --- KIRILGANLIK ÖNERİLERİ ---
     kOneri: {
       saglamBaslik: "Maşallah, Turp Gibisiniz! 🧿",
@@ -124,6 +134,16 @@ export const ceviriler = {
     kucuk: "Small",
     buyuk: "Big",
     sifirla: "Reset",
+    yukleniyor: "Loading...",
+    girisBaslik: "Log In",
+    kayitBaslik: "Sign Up",
+    email: "Email Address",
+    sifre: "Password",
+    girisButon: "Log In",
+    kayitButon: "Sign Up",
+    googleButon: "Sign in with Google",
+    hesapYok: "No account? Sign Up",
+    hesapVar: "Already have an account? Log In",
     // --- FRAILTY REC ---
     kOneri: {
       saglamBaslik: "Great! You are Fit as a Fiddle! 💪",
@@ -194,7 +214,7 @@ export const ceviriler = {
 
   de: {
     // --- ALLGEMEINE UI ---
-    baslik: "Seniorenfreundlicher Pflegeassistent",
+    baslik: "Altenpflege-Assistent",
     ilacKutusu: "Medikamenten-Tracker",
     suKutusu: "Tägliches Wasserziel",
     profil: "Profilzusammenfassung",
@@ -220,6 +240,16 @@ suKutusu: "Tägliches Wasserziel",
     kucuk: "Klein",
     buyuk: "Groß",
     sifirla: "Zurücksetzen",
+    yukleniyor: "Wird geladen...",
+    girisBaslik: "Anmelden",
+    kayitBaslik: "Registrieren",
+    email: "E-Mail-Adresse",
+    sifre: "Passwort",
+    girisButon: "Anmelden",
+    kayitButon: "Registrieren",
+    googleButon: "Mit Google anmelden",
+    hesapYok: "Kein Konto? Registrieren",
+    hesapVar: "Haben Sie bereits ein Konto? Anmelden",
     // --- GEBRECHLICHKEIT EMPF. ---
     kOneri: {
       saglamBaslik: "Super! Sie sind fit wie ein Turnschuh! 💪",
