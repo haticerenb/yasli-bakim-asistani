@@ -1,3 +1,5 @@
+import React, { useState } from "react";
+import DemansOneri from "./DemansOneri";
 const DemansTesti = ({ dil }) => {
   const [aktifSoru, setAktifSoru] = useState(0);
   const [puan, setPuan] = useState(0);
