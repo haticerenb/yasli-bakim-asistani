@@ -243,4 +243,4 @@ const resetButtonStyle = {
   flexDirection: 'row'
 };
 
-export default SuTakibi;
+export default SuTakip;
